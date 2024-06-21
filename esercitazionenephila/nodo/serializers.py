@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Utente
+from .models import Nodo
 
-class UtenteSerializer(serializers.ModelSerializer):
+class NodoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Utente
-        fields = '__all__'
+        model = Nodo
+        fields = ['id','owner','padre']
+
+class CreateNoidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nodo
+        fields = ['owner','padre']

@@ -4,7 +4,7 @@ from .models import Utente
 class UtenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utente
-        fields = '__all__'
+        fields = ['id','ruolo']
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,UserManager
+
 # Classe utente
 class Utente(AbstractBaseUser):
 
@@ -15,4 +16,5 @@ class Utente(AbstractBaseUser):
     ruolo = models.SmallIntegerField(choices= Ruolo,null=False)
     last_login = models.DateTimeField(("last login"), blank=True, null=True)
 
+    objects = UserManager()
 
