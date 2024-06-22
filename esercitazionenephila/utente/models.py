@@ -11,9 +11,9 @@ class Utente(AbstractBaseUser):
         OPERATORE = 1,
         SUPERUTENTE = 2
 
-    username = models.CharField(max_length=40,unique=True,null=False)
-    password = models.CharField(max_length=100,null=False)
-    ruolo = models.SmallIntegerField(choices= Ruolo,null=False)
+    username = models.CharField(max_length=40,unique=True,null=False,blank=False)
+    password = models.CharField(max_length=100,null=False,blank=False)
+    ruolo = models.SmallIntegerField(choices= Ruolo,null=False,blank=False)
     last_login = models.DateTimeField(("last login"), blank=True, null=True)
 
     objects = UserManager()

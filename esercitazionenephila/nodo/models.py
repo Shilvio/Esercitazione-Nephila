@@ -10,7 +10,7 @@ class Nodo(models.Model):
         null=False,
         related_name='nodi'
     )
-    titolo = models.CharField(max_length=40,null=False)
+    titolo = models.CharField(max_length=40,null=False, blank=False,default=None)
     padre = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,

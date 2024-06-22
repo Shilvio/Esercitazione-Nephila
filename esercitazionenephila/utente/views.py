@@ -18,7 +18,7 @@ def register(request):
         serializer.save()
         utente = Utente.objects.get(username = request.data["username"])
         token = Token.objects.create(user = utente)
-        return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}})
+        return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])

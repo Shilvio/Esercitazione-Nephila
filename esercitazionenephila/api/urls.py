@@ -10,6 +10,10 @@ urlpatterns = [
     path('login/', views_utente.login),
 
     #path nodi
-    path('nodi/', views_nodi.nodiViews),
-    #path('nodi', views_nodi.getNodi,views_nodi.postNodoChild),
+    path('nodo/', views_nodi.postNodoRoot),
+    path('nodo/<int:nodo_id>/', views_nodi.nodiChildViews),
+
+    #path risorse
+    path('nodo/<int:nodo_id>/risorsa/', views_risorsa.GetRisorsa),
+    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>', views_risorsa.GetRisorsa)
 ]

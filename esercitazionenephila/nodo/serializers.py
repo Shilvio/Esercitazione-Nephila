@@ -4,9 +4,9 @@ from .models import Nodo
 class NodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nodo
-        fields = ['id','owner','padre']
+        fields = ['titolo']
 
-class CreateNoidoSerializer(serializers.ModelSerializer):
+class CreateNodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nodo
-        fields = ['owner','padre']
+        fields = ['owner','padre','titolo']
