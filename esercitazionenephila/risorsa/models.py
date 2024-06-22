@@ -20,5 +20,5 @@ class Risorsa(models.Model):
 
     responsabile = models.BooleanField(default=False,null=False)
     operatore = models.BooleanField(default=False,null=False)
-    titolo = models.CharField(max_length=40,null=False)
-    contenuto= models.TextField(null=False)
+    titolo = models.CharField(max_length=40,null=False, blank=False,default=None)
+    contenuto= models.TextField(null=False, blank=False,default=None)

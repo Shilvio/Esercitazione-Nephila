@@ -1,10 +1,8 @@
 # Create your views here.
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Utente
 from .serializers import *
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +11,6 @@ from rest_framework.permissions import IsAuthenticated
 def searchNodiChild(nodo):
     try:
         nodiChild = Nodo.objects.filter(padre= nodo).all()
-        print(nodiChild)
         return nodiChild
     except Nodo.DoesNotExist:
         return None
@@ -61,7 +58,6 @@ def deleteNodo(request,nodo_id):
 
 def putTitoloNodo(request,nodo_id):
     nodo = searchNodo(nodo_id)
-    print(nodo)
     if ((not request.data)or(request.data['titolo'] in [None,''])):
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     if nodo.owner.id == request.user.id:
@@ -103,12 +99,10 @@ def postNodoRoot(request):
 def nodiChildViews(request,nodo_id):
     if request.method == 'GET':
         return getNodo(nodo_id)
-
     elif request.method == 'POST':
         return postNodoChild(request,nodo_id)
-
     elif request.method == 'DELETE':
         return deleteNodo(request,nodo_id)
-    else:
+    elif request.method == 'PUT':
         return putTitoloNodo(request,nodo_id)
 

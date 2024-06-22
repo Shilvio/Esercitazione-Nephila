@@ -12,8 +12,9 @@ urlpatterns = [
     #path nodi
     path('nodo/', views_nodi.postNodoRoot),
     path('nodo/<int:nodo_id>/', views_nodi.nodiChildViews),
+    path('nodo/<int:nodo_id>/', views_nodi.nodiChildViews),
 
     #path risorse
-    path('nodo/<int:nodo_id>/risorsa/', views_risorsa.GetRisorsa),
-    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>', views_risorsa.GetRisorsa)
+    path('nodo/<int:nodo_id>/risorsa/', views_risorsa.postRisorsa),
+    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/', views_risorsa.risorsaViews)
 ]
