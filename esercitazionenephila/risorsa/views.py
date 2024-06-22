@@ -43,21 +43,16 @@ def deleteRisorsa(request,risorsa_id):
 @permission_classes([IsAuthenticated])
 def postRisorsa(request,nodo_id):
     nodo = nodoViews.searchNodo(nodo_id)
-    print(request.data['operatore'] in [None])
-    print("ciao")
     if not nodo:
         return Response({"details": "Nessun nodo presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if nodo.owner.id == request.user.id:
 
-        if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''] or (request.data['operatore'] in [None,''])or (request.data['responsabile'] in [None,'']))):
+        if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''])):
 
             return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = CreateRisorsaSerializer(data={'owner':request.user.id,
-                                                   'nodo':nodo_id,
-                                                   'titolo':request.data['titolo'],
-                                                   'contenuto':request.data['contenuto'],
-                                                   'responsabile':request.data['responsabile'],
-                                                   'operatore':request.data['operatore']})
+        request.data['owner']=request.user.id
+        request.data['nodo']= nodo_id
+        serializer = CreateRisorsaSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"risorsa": serializer.data})
