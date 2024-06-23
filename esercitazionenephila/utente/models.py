@@ -29,7 +29,7 @@ class Utente(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(max_length=40,unique=True,null=False,blank=False)
     password = models.CharField(max_length=100,null=False,blank=False)
     ruolo = models.SmallIntegerField(choices= Ruolo,null=False,blank=False)
-    last_login = models.DateTimeField(("last login"), blank=True, null=True)
+    last_login = models.DateTimeField(("last login"), blank=True, null=True, auto_now=False)
 
     objects = CustomUtentiManager()
     REQUIRED_FIELDS = ["password"]
