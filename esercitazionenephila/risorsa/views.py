@@ -116,7 +116,7 @@ def risorsa_id_handler(request,nodo_id,risorsa_id):
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def postNuovaRisorsaPadre(request,nodo_id):
+def post_nuova_risorsa_padre(request,nodo_id):
     padre = nodo_views.search_nodo_padre(nodo_id)
     if not padre:
         return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)

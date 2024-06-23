@@ -9,6 +9,8 @@ from .serializers import *
 @api_view(['POST'])
 def register(request):
     serializer = RegisterSerializer(data = request.data)
+    if request.data["ruolo"] == 2:
+        return Response("ruolo 2 non permesso", status=status.HTTP_400_BAD_REQUEST)
     if serializer.is_valid():
         serializer.save()
         utente = Utente.objects.get(username = request.data["username"])

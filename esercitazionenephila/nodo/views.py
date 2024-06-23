@@ -116,8 +116,6 @@ def post_nuovo_child_in_padre(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-
 # Create your views here.
 @api_view(['GET','POST','DELETE','PUT'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])

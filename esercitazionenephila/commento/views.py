@@ -22,7 +22,7 @@ def search_commenti(risorsa_id):
 def post_commento(request,nodo_id,risorsa_id):
     risorsa = risorsa_views.search_risorsa(risorsa_id)
     if not risorsa:
-        return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
+        return Response({"details": "Nessuna risorsa da commentare"},status=status.HTTP_404_NOT_FOUND)
     if risorsa.owner.id == request.user.id:
         if ((not request.data)or(request.data['contenuto'] in [None,''])):
             return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
