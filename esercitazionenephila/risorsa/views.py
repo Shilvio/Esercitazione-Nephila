@@ -6,11 +6,11 @@ from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from commento import views as commentoViews
-from commento import serializers as serializersCommento
-from nodo import views as nodoViews
+from commento import views as commento_views
+from commento import serializers as serializers_commento
+from nodo import views as nodo_views
 
-def validateRole(utente,risorsa):
+def validate_role(utente,risorsa):
     if risorsa.owner.id == utente.id:
          return True
     elif utente.ruolo == 0  and risorsa.operatore:
@@ -20,7 +20,7 @@ def validateRole(utente,risorsa):
     else:
         return False
 
-def searchRisorsaNodo(nodo_id):
+def search_risorsa_nodo(nodo_id):
     try :
         risorse = Risorsa.objects.filter(nodo=nodo_id).all()
         return risorse
@@ -28,7 +28,7 @@ def searchRisorsaNodo(nodo_id):
         return None
 
 
-def searchRisorsa(risorsa_id):
+def search_risorsa(risorsa_id):
     try :
         risorsa = Risorsa.objects.get(id=risorsa_id)
         return risorsa
@@ -36,22 +36,22 @@ def searchRisorsa(risorsa_id):
         return None
 
 
-def getRisorsa(request,risorsa_id):
-    risorsa = searchRisorsa(risorsa_id)
+def get_risorsa(request,risorsa_id):
+    risorsa = search_risorsa(risorsa_id)
     if not risorsa:
             return Response({"details": "Nessun risorsa presente"},status=status.HTTP_404_NOT_FOUND)
-    if validateRole(request.user,risorsa):
+    if validate_role(request.user,risorsa):
         serializer = RisorsaSerializer(risorsa, many=False)
-        commenti = commentoViews.searchCommenti(risorsa_id)
-        commentiData = serializersCommento.CommentoSerializer(commenti, many=True).data if commenti else None
+        commenti = commento_views.search_commenti(risorsa_id)
+        commentiData = serializers_commento.CommentoSerializer(commenti, many=True).data if commenti else None
 
         return Response({"risorsa": serializer.data, "commenti":commentiData } )
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-def deleteRisorsa(request,risorsa_id):
-    risorsa = searchRisorsa(risorsa_id)
+def delete_risorsa(request,risorsa_id):
+    risorsa = search_risorsa(risorsa_id)
     if risorsa.owner.id == request.user.id:
         if not risorsa:
             return Response({"details": "Nessun risorsa presente"},status=status.HTTP_404_NOT_FOUND)
@@ -62,8 +62,8 @@ def deleteRisorsa(request,risorsa_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
-def putRisorsa(request,risorsa_id):
-    risorsa = searchRisorsa(risorsa_id)
+def put_risorsa(request,risorsa_id):
+    risorsa = search_risorsa(risorsa_id)
     if not risorsa:
         return Response({"details": "Nessun risorsa presente"},status=status.HTTP_404_NOT_FOUND)
     if not request.data:
@@ -83,8 +83,8 @@ def putRisorsa(request,risorsa_id):
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def postRisorsa(request,nodo_id):
-    nodo = nodoViews.searchNodo(nodo_id)
+def post_risorsa(request,nodo_id):
+    nodo = nodo_views.search_nodo(nodo_id)
     if not nodo:
         return Response({"details": "Nessun nodo presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if nodo.owner.id == request.user.id:
@@ -105,19 +105,19 @@ def postRisorsa(request,nodo_id):
 @api_view(['GET','DELETE','PUT'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def risorsaIdHandler(request,nodo_id,risorsa_id):
+def risorsa_id_handler(request,nodo_id,risorsa_id):
     if request.method == 'GET':
-        return getRisorsa(request,risorsa_id)
+        return get_risorsa(request,risorsa_id)
     elif request.method == 'DELETE':
-        return deleteRisorsa(request,risorsa_id)
+        return delete_risorsa(request,risorsa_id)
     elif request.method == 'PUT':
-        return putRisorsa(request,risorsa_id)
+        return put_risorsa(request,risorsa_id)
 
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def postNuovaRisorsaPadre(request,nodo_id):
-    padre = nodoViews.searchNodoPadre(nodo_id)
+    padre = nodo_views.search_nodo_padre(nodo_id)
     if not padre:
         return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if padre.owner.id == request.user.id:

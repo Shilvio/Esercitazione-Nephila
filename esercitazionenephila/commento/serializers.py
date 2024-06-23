@@ -6,7 +6,7 @@ class CommentoSerializer(serializers.ModelSerializer):
         model = Commento
         fields = ['contenuto']
 
-class createCommentoSerializer(serializers.ModelSerializer):
+class CreateCommentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commento
         fields = ['risorsa','contenuto']

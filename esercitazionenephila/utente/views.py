@@ -2,12 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication,TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-
 from .models import Utente
-
 from .serializers import *
 
 # Create your views here.
@@ -35,10 +30,3 @@ def login(request):
             token = Token.objects.create(user = utente)
         return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication,TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def testToken(request):
-    return Response("auth verified passed for {}".format(request.user.ruolo))
-
