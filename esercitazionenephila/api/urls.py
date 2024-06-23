@@ -1,24 +1,40 @@
-from django.urls import path
+from django.urls import path,include
+
 from utente import views as views_utente
 from risorsa import views as views_risorsa
 from nodo import views as views_nodo
 from commento import views as views_commento
 
+
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+
+swagger_view = get_schema_view(
+    openapi.Info(
+        title="Post API",
+        default_version='1.0.0',
+        description="Webapi nodi-risorse per Nephila"
+    ),
+    public=True,
+)
+
+
 urlpatterns = [
     # path utenti
-    path('register/', views_utente.register),
-    path('login/', views_utente.login),
+    path('', include('utente.urls')),
 
     #path nodi
-    path('nodo/', views_nodo.post_nodo_root),
-    path('nodo/<int:nodo_id>/', views_nodo.nodo_handler),
-    path('nodo/<int:nodo_id>/padre/', views_nodo.post_nuovo_child_in_padre),
+    path('', include('nodo.urls')),
+
 
     #path risorse
-    path('nodo/<int:nodo_id>/risorsa/', views_risorsa.post_risorsa),
-    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/', views_risorsa.risorsa_id_handler),
-    path('nodo/<int:nodo_id>/risorsa/padre', views_risorsa.post_nuova_risorsa_padre),
+    path('', include('risorsa.urls')),
 
     #path commenti
-    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/commenti', views_commento.post_commento),
+    path('', include('commento.urls')),
+
+    #path swagger per docu
+    path('swagger', swagger_view.with_ui('swagger',cache_timeout=0), name="swagger_schema"),
+    path('redoc', swagger_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
 ]

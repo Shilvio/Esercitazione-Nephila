@@ -7,6 +7,8 @@ from rest_framework.authentication import SessionAuthentication,TokenAuthenticat
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from risorsa import views as risorsa_views
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 # Create your views here.
 
 def search_commenti(risorsa_id):
@@ -16,6 +18,22 @@ def search_commenti(risorsa_id):
     except Commento.DoesNotExist:
         return None
 
+
+@swagger_auto_schema(
+    tags=['commenti'],
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'contenuto': openapi.Schema(type=openapi.TYPE_STRING, default='contenuto test'),
+        },
+        required=['contenuto']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+    }
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])

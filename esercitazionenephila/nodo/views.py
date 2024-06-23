@@ -8,6 +8,8 @@ from rest_framework.authentication import SessionAuthentication,TokenAuthenticat
 from rest_framework.permissions import IsAuthenticated
 from risorsa import views as views_risorsa
 from risorsa import serializers as risorsa_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 def search_nodi_child(nodo):
     try:
@@ -97,6 +99,21 @@ def post_nodo(request,padre):
         return Response({"nodo": serializer.data})
     return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    tags=['nodi'],
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+        },
+        required=['titolo']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+    }
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -104,6 +121,22 @@ def post_nodo_root(request):
     return post_nodo(request,None)
 
 
+@swagger_auto_schema(
+    tags=['nodi'],
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+        },
+        required=['titolo']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found'
+    }
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -116,7 +149,31 @@ def post_nuovo_child_in_padre(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
-# Create your views here.
+@swagger_auto_schema(
+    tags=['nodi'],
+    methods=['post','put'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+        },
+        required=['titolo']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found'
+    }
+)
+@swagger_auto_schema(
+    tags=['nodi'],
+    methods=['get','delete'],
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found'
+    }
+)
 @api_view(['GET','POST','DELETE','PUT'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])

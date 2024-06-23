@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from commento import views as commento_views
 from commento import serializers as serializers_commento
 from nodo import views as nodo_views
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 def validate_role(utente,risorsa):
     if risorsa.owner.id == utente.id:
@@ -79,7 +81,25 @@ def put_risorsa(request,risorsa_id):
     print(serializer.errors)
     return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(
+    tags=['risorse'],
+    methods=['post'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+            'contenuto': openapi.Schema(type=openapi.TYPE_STRING, default='contenuto test'),
 
+        },
+        required=['titolo','contenuto']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found',
+        401: 'Unauthorized'
+    }
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -102,6 +122,33 @@ def post_risorsa(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+@swagger_auto_schema(
+    tags=['risorse'],
+    methods=['get','delete'],
+    responses={
+        200: 'OK',
+        404: 'Not Found',
+        401: 'Unauthorized',
+    }
+)
+@swagger_auto_schema(
+    tags=['risorse'],
+    methods=['put'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+            'contenuto': openapi.Schema(type=openapi.TYPE_STRING, default='contenuto test'),
+
+        },
+        required=['titolo','contenuto']
+    ),
+    responses={
+        200: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found'
+    }
+)
 @api_view(['GET','DELETE','PUT'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -113,6 +160,25 @@ def risorsa_id_handler(request,nodo_id,risorsa_id):
     elif request.method == 'PUT':
         return put_risorsa(request,risorsa_id)
 
+@swagger_auto_schema(
+    tags=['risorse'],
+    methods=['post'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+            'contenuto': openapi.Schema(type=openapi.TYPE_STRING, default='contenuto test'),
+
+        },
+        required=['titolo','contenuto']
+    ),
+    responses={
+        201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found',
+        401: 'Unauthorized'
+    }
+)
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
