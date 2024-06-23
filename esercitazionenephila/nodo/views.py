@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
+from risorsa import views as viewsRisorsa
+from risorsa import serializers as risorsaSerializer
 
 def searchNodiChild(nodo):
     try:
@@ -19,10 +20,21 @@ def searchNodiChild(nodo):
 # crea il nodo child
 def postNodoChild(request,nodo_id):
     nodo = searchNodo(nodo_id)
+    if not nodo:
+        return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if nodo.owner.id == request.user.id:
         return postNodo(request,nodo.id)
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
+
+def searchNodoPadre(nodo_id):
+    try :
+        nodo = Nodo.objects.get(id=nodo_id)
+        padre = nodo.padre
+        return padre
+    except Nodo.DoesNotExist:
+        return None
+
 
 def searchNodo(nodo_id):
     try :
@@ -37,10 +49,10 @@ def getNodo(nodo_id):
         return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
     serializer = NodoSerializer(nodo, many=False)
     figli = searchNodiChild(nodo)
-    if not figli:
-        return Response({"nodo": serializer.data, "figli":None })
-    figliSerializer = NodoSerializer(figli, many=True)
-    return Response({"nodo": serializer.data, "figli":figliSerializer.data, "risorse":figliSerializer.data} )
+    risorse = viewsRisorsa.searchRisorsaNodo(nodo_id)
+    figliData = NodoSerializer(figli, many=True).data if figli else None
+    risorseData = risorsaSerializer.RisorsaNodoSerializer(risorse ,many=True).data if risorse else None
+    return Response({"nodo": serializer.data, "figli":figliData, "risorse":risorseData} )
 
 def deleteNodo(request,nodo_id):
     nodo = searchNodo(nodo_id)
@@ -49,7 +61,8 @@ def deleteNodo(request,nodo_id):
             return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
         serializer = NodoSerializer(nodo, many=False)
         figli = searchNodiChild(nodo)
-        if not figli:
+        risorse = viewsRisorsa.searchRisorsa(nodo)
+        if ((not figli) and (not risorse)):
             nodo.delete()
             return Response({"details": "nodo "+ str(serializer.data['id']) + " cancellato"})
 
@@ -64,7 +77,7 @@ def putTitoloNodo(request,nodo_id):
         if not nodo:
             return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
         nodo.titolo = request.data['titolo']
-        serializer = NodoSerializer(nodo,data=request.data ,many=False)
+        serializer = ModificaNodoSerializer(nodo,data=request.data ,many=False)
         if serializer.is_valid():
             serializer.save()
             return Response({"nodo": serializer.data},status=status.HTTP_200_OK)
@@ -91,12 +104,25 @@ def postNodoRoot(request):
     return postNodo(request,None)
 
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication,TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def postNuovoChildInPadre(request,nodo_id):
+    padre = searchNodoPadre(nodo_id)
+    if not padre:
+        return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
+    if padre.owner.id == request.user.id:
+        return postNodo(request,padre.id)
+    else:
+        return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 
 # Create your views here.
 @api_view(['GET','POST','DELETE','PUT'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def nodiChildViews(request,nodo_id):
+def nodoHandler(request,nodo_id):
     if request.method == 'GET':
         return getNodo(nodo_id)
     elif request.method == 'POST':

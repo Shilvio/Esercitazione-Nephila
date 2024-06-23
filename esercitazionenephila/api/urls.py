@@ -1,20 +1,24 @@
 from django.urls import path
-from utente import views as views_utente
-from risorsa import views as views_risorsa
-from nodo import views as views_nodi
-from commento import views as views_commenti
+from utente import views as viewsUtente
+from risorsa import views as viewsRisorsa
+from nodo import views as viewsNodo
+from commento import views as viewsCommento
 
 urlpatterns = [
     # path utenti
-    path('register/', views_utente.register),
-    path('login/', views_utente.login),
+    path('register/', viewsUtente.register),
+    path('login/', viewsUtente.login),
 
     #path nodi
-    path('nodo/', views_nodi.postNodoRoot),
-    path('nodo/<int:nodo_id>/', views_nodi.nodiChildViews),
-    path('nodo/<int:nodo_id>/', views_nodi.nodiChildViews),
+    path('nodo/', viewsNodo.postNodoRoot),
+    path('nodo/<int:nodo_id>/', viewsNodo.nodoHandler),
+    path('nodo/<int:nodo_id>/padre/', viewsNodo.postNuovoChildInPadre),
 
     #path risorse
-    path('nodo/<int:nodo_id>/risorsa/', views_risorsa.postRisorsa),
-    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/', views_risorsa.risorsaViews)
+    path('nodo/<int:nodo_id>/risorsa/', viewsRisorsa.postRisorsa),
+    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/', viewsRisorsa.risorsaIdHandler),
+    path('nodo/<int:nodo_id>/risorsa/padre', viewsRisorsa.postNuovaRisorsaPadre),
+
+    #path commenti
+    path('nodo/<int:nodo_id>/risorsa/<int:risorsa_id>/commenti', viewsCommento.postCommento),
 ]

@@ -10,3 +10,8 @@ class CreateNodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nodo
         fields = ['owner','padre','titolo']
+
+class ModificaNodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nodo
+        fields = ['titolo']
