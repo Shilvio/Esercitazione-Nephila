@@ -23,6 +23,7 @@ from drf_yasg import openapi
     responses={
         201: 'Created',
         400: 'Bad Request',
+        404: 'Not Found'
     }
 )
 @api_view(['POST'])
@@ -51,6 +52,7 @@ def register(request):
     responses={
         201: 'Created',
         400: 'Bad Request',
+        404: 'Not Found'
     }
 )
 @api_view(['POST'])
@@ -65,5 +67,5 @@ def login(request):
             token = Token.objects.get(user_id=utente.id)
         except Token.DoesNotExist:
             token = Token.objects.create(user = utente)
-        return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}})
+        return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

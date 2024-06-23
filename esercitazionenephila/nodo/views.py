@@ -96,7 +96,7 @@ def post_nodo(request,padre):
     serializer = CreateNodoSerializer(data={'owner':request.user.id,'padre':padre,'titolo':request.data['titolo']})
     if serializer.is_valid():
         serializer.save()
-        return Response({"nodo": serializer.data})
+        return Response({"nodo": serializer.data},status=status.HTTP_201_CREATED)
     return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
@@ -151,7 +151,7 @@ def post_nuovo_child_in_padre(request,nodo_id):
 
 @swagger_auto_schema(
     tags=['nodi'],
-    methods=['post','put'],
+    methods=['post'],
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -161,6 +161,22 @@ def post_nuovo_child_in_padre(request,nodo_id):
     ),
     responses={
         201: 'Created',
+        400: 'Bad Request',
+        404: 'Not Found'
+    }
+)
+@swagger_auto_schema(
+    tags=['nodi'],
+    methods=['put'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'titolo': openapi.Schema(type=openapi.TYPE_STRING, default='titolo test'),
+        },
+        required=['titolo']
+    ),
+    responses={
+        200: 'Ok',
         400: 'Bad Request',
         404: 'Not Found'
     }

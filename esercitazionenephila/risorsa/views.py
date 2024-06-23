@@ -116,7 +116,7 @@ def post_risorsa(request,nodo_id):
         serializer = CreateRisorsaSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"risorsa": serializer.data})
+            return Response({"risorsa": serializer.data},status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -194,7 +194,7 @@ def post_nuova_risorsa_padre(request,nodo_id):
         serializer = CreateRisorsaSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"risorsa": serializer.data})
+            return Response({"risorsa": serializer.data},status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     else:
