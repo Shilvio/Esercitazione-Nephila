@@ -44,7 +44,7 @@ def register(request):
         return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# api handler per loggare un utente, genera un token di auth
+# api handler per loggare un utente
 @swagger_auto_schema(
     tags=['utenti'],
     method='post',
@@ -64,19 +64,18 @@ def register(request):
 )
 @api_view(['POST'])
 def login(request):
+
     try:
-        serializer = LoginSerializer(data = request.data)
-    except:
-        return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        utente = Utente.objects.get(username = request.data["username"])
+        utente = Utente.objects.get(username = request.data["username"], password=request.data["password"])
     except Utente.DoesNotExist:
             return Response({"detail": "Utente not found"},status=status.HTTP_404_NOT_FOUND)
-    if request.data["password"] == utente.password:
-        try:
-            token = Token.objects.get(user_id=utente.id).delete()
-            token = Token.objects.create(user = utente)
-        except Token.DoesNotExist:
-            token = Token.objects.create(user = utente)
-        return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except KeyError:
+        return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        token = Token.objects.get(user_id=utente.id).delete()
+        token = Token.objects.create(user = utente)
+    except Token.DoesNotExist:
+        token = Token.objects.create(user = utente)
+    serializer = UtenteSerializer(utente)
+    return Response({"token": token.key, "utente" : serializer.data},status=status.HTTP_201_CREATED)
+ 
