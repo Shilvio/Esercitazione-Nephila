@@ -65,7 +65,7 @@ La **Documentazione** è presente come pagina **Swagger** nella **homepage** del
 
 ## Unit testing
 
-L' Api è testabile attraverso la Test Suit fornita da **Django**, o la documentazione **Swagger**, la suit non comprende tutti gli endpoint possibili, ma alcuni casi limiti di autenticazione e generazione, ricerca e modifica dei nodi root, per eseguire tutti i test è possibile usare il comando:
+L' Api è testabile attraverso la Test Suit fornita da **Django**, o la documentazione **Swagger**, la Suite non comprende tutti gli endpoint possibili, ma alcuni casi limiti di autenticazione e generazione, ricerca e modifica dei nodi root, per eseguire tutti i test è possibile usare il comando:
 
     python3 manage.py test
 
@@ -75,7 +75,7 @@ https://docs.djangoproject.com/en/5.0/topics/testing/overview/#running-tests
 
 ## Amministrazione e Superutenti
 
-È possibile generare un superutente e controlalre i nodi e risorse generate utilizzando **Django admin** con il comando:
+È possibile generare un superutente e controllare i nodi e risorse generate utilizzando **Django admin** con il comando:
 
     python3 manage.py createsuperuser
 
