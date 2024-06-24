@@ -66,13 +66,13 @@ def delete_nodo(request,nodo_id):
             return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
     try:
         if nodo.owner.id == request.user.id:
+
             serializer = NodoSerializer(nodo, many=False)
-            figli = search_nodi_child(nodo)
-            risorse = views_risorsa.search_risorsa(nodo)
+            figli = list(search_nodi_child(nodo_id))
+            risorse = list(views_risorsa.search_risorsa_nodo(nodo_id))
             if ((not figli) and (not risorse)):
                 nodo.delete()
-                return Response({"details": "nodo "+ str(serializer.data['id']) + " cancellato"})
-
+                return Response({"details": "nodo "+ str(serializer.data['titolo']) + " cancellato"})
     except:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -217,4 +217,3 @@ def nodo_handler(request,nodo_id):
         return delete_nodo(request,nodo_id)
     elif request.method == 'PUT':
         return put_titolo_nodo(request,nodo_id)
-

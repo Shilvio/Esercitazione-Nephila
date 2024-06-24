@@ -10,8 +10,3 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utente
         fields = ['username','password','ruolo']
-
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Utente
-        fields = ['username','password']
