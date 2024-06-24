@@ -69,7 +69,7 @@ def login(request):
         utente = Utente.objects.get(username = request.data["username"], password=request.data["password"])
     except Utente.DoesNotExist:
             return Response({"detail": "Utente not found"},status=status.HTTP_404_NOT_FOUND)
-    except KeyError:
+    except:
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         token = Token.objects.get(user_id=utente.id).delete()
@@ -78,4 +78,4 @@ def login(request):
         token = Token.objects.create(user = utente)
     serializer = UtenteSerializer(utente)
     return Response({"token": token.key, "utente" : serializer.data},status=status.HTTP_201_CREATED)
- 
+
