@@ -35,6 +35,6 @@ urlpatterns = [
     path('', include('commento.urls')),
 
     #path swagger per docu
-    path('swagger', swagger_view.with_ui('swagger',cache_timeout=0), name="swagger_schema"),
+    path('', swagger_view.with_ui('swagger',cache_timeout=0), name="swagger_schema"),
     path('redoc', swagger_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
 ]
