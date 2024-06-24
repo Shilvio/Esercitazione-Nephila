@@ -108,9 +108,12 @@ def post_risorsa(request,nodo_id):
     if not nodo:
         return Response({"details": "Nessun nodo presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if nodo.owner.id == request.user.id:
-
-        if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''])):
+        try:
+            if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''])):
+                return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+
         request.data['owner']=request.user.id
         request.data['nodo']= nodo_id
         serializer = CreateRisorsaSerializer(data=request.data)
@@ -187,8 +190,12 @@ def post_nuova_risorsa_padre(request,nodo_id):
     if not padre:
         return Response({"details": "Nessun nodo padre presente sul quale caricare la risorsa"},status=status.HTTP_404_NOT_FOUND)
     if padre.owner.id == request.user.id:
-        if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''])):
+        try:
+            if ((not request.data)or(request.data['titolo'] in [None,''])or(request.data['contenuto'] in [None,''])):
+                return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+
         request.data['owner']=request.user.id
         request.data['nodo']= padre.id
         serializer = CreateRisorsaSerializer(data=request.data)

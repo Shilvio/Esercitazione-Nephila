@@ -28,9 +28,15 @@ from drf_yasg import openapi
 )
 @api_view(['POST'])
 def register(request):
-    serializer = RegisterSerializer(data = request.data)
-    if request.data["ruolo"] == 2:
-        return Response("ruolo 2 non permesso", status=status.HTTP_400_BAD_REQUEST)
+    try:
+        serializer = RegisterSerializer(data = request.data)
+    except:
+        return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+    if request.data:
+        if request.data["ruolo"] == 2:
+            return Response("ruolo 2 non permesso", status=status.HTTP_400_BAD_REQUEST)
+    else:
+            return Response("Richiesta malformata", status=status.HTTP_400_BAD_REQUEST)
     if serializer.is_valid():
         serializer.save()
         utente = Utente.objects.get(username = request.data["username"])
@@ -57,14 +63,18 @@ def register(request):
 )
 @api_view(['POST'])
 def login(request):
-    serializer = LoginSerializer(data = request.data)
+    try:
+        serializer = LoginSerializer(data = request.data)
+    except:
+        return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         utente = Utente.objects.get(username = request.data["username"])
     except Utente.DoesNotExist:
             return Response({"detail": "Utente not found"},status=status.HTTP_404_NOT_FOUND)
     if request.data["password"] == utente.password:
         try:
-            token = Token.objects.get(user_id=utente.id)
+            token = Token.objects.get(user_id=utente.id).delete()
+            token = Token.objects.create(user = utente)
         except Token.DoesNotExist:
             token = Token.objects.create(user = utente)
         return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)

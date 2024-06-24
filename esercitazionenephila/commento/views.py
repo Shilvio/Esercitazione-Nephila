@@ -42,7 +42,10 @@ def post_commento(request,nodo_id,risorsa_id):
     if not risorsa:
         return Response({"details": "Nessuna risorsa da commentare"},status=status.HTTP_404_NOT_FOUND)
     if risorsa.owner.id == request.user.id:
-        if ((not request.data)or(request.data['contenuto'] in [None,''])):
+        try:
+            if ((not request.data)or(request.data['contenuto'] in [None,''])):
+                return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = CreateCommentoSerializer(data={'risorsa':risorsa.id,'contenuto':request.data['contenuto']},status=status.HTTP_201_CREATED)
         if serializer.is_valid():

@@ -73,8 +73,12 @@ def delete_nodo(request,nodo_id):
 
 def put_titolo_nodo(request,nodo_id):
     nodo = search_nodo(nodo_id)
-    if ((not request.data)or(request.data['titolo'] in [None,''])):
+    try:
+        if ((not request.data)or(request.data['titolo'] in [None,''])):
+            return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+
     if nodo.owner.id == request.user.id:
         if not nodo:
             return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
@@ -91,7 +95,10 @@ def put_titolo_nodo(request,nodo_id):
 # crea il nodo root
 def post_nodo(request,padre):
 
-    if ((not request.data)or(request.data['titolo'] in [None,''])):
+    try:
+        if ((not request.data)or(request.data['titolo'] in [None,''])):
+            return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
         return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
     serializer = CreateNodoSerializer(data={'owner':request.user.id,'padre':padre,'titolo':request.data['titolo']})
     if serializer.is_valid():
