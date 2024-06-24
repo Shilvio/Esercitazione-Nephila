@@ -12,6 +12,7 @@ from nodo import views as nodo_views
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+# valida il ruolo dell'utente per garantire l'accesso alla risorsa, i su possono accedere a tutto
 def validate_role(utente,risorsa):
     if risorsa.owner.id == utente.id:
          return True
@@ -19,9 +20,12 @@ def validate_role(utente,risorsa):
         return True
     elif utente.ruolo == 1  and risorsa.responsabile:
         return True
+    elif utente.ruolo == 2:
+        return True
     else:
         return False
 
+# funzione di ricerca delle risorse usata dai nodi
 def search_risorsa_nodo(nodo_id):
     try :
         risorse = Risorsa.objects.filter(nodo=nodo_id).all()
@@ -29,7 +33,7 @@ def search_risorsa_nodo(nodo_id):
     except Risorsa.DoesNotExist:
         return None
 
-
+# funzione di ricerca di una risorsa
 def search_risorsa(risorsa_id):
     try :
         risorsa = Risorsa.objects.get(id=risorsa_id)
@@ -37,7 +41,7 @@ def search_risorsa(risorsa_id):
     except Risorsa.DoesNotExist:
         return None
 
-
+# funzione get di una risorsa indicata dall'id
 def get_risorsa(request,risorsa_id):
     risorsa = search_risorsa(risorsa_id)
     if not risorsa:
@@ -51,7 +55,7 @@ def get_risorsa(request,risorsa_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
+# funzione delete di una risorsa indicata dall'id
 def delete_risorsa(request,risorsa_id):
     risorsa = search_risorsa(risorsa_id)
     if risorsa.owner.id == request.user.id:
@@ -64,6 +68,7 @@ def delete_risorsa(request,risorsa_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+# funzione put di una risorsa indicata dall'id
 def put_risorsa(request,risorsa_id):
     risorsa = search_risorsa(risorsa_id)
     if not risorsa:
@@ -81,6 +86,7 @@ def put_risorsa(request,risorsa_id):
     print(serializer.errors)
     return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
 
+# api view handler per postare una risorsa
 @swagger_auto_schema(
     tags=['risorse'],
     methods=['post'],
@@ -125,6 +131,7 @@ def post_risorsa(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+# api view handler per operazione get delete e put una risorsa
 @swagger_auto_schema(
     tags=['risorse'],
     methods=['get','delete'],
@@ -163,6 +170,7 @@ def risorsa_id_handler(request,nodo_id,risorsa_id):
     elif request.method == 'PUT':
         return put_risorsa(request,risorsa_id)
 
+# api view handler per generare una risorsa nel nodo padre
 @swagger_auto_schema(
     tags=['risorse'],
     methods=['post'],

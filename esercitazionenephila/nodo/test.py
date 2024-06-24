@@ -99,3 +99,22 @@ class TestAuth(APITestCase):
         self.test_post_nodo_ok()
         response = self.client.put(path=self.nodo_creato,data=self.nodo, format='json')
         self.assertEqual(response.status_code,200)
+
+    # test delete nodo condizioni ottimali
+    def test_get_nodo_ok(self):
+        self.test_post_nodo_ok()
+        response = self.client.delete(path=self.nodo_creato, format='json')
+        self.assertEqual(response.status_code,200)
+
+    # test delete nodo condizioni utente non autenticato
+    def test_get_nodo_ok(self):
+        self.test_post_nodo_ok()
+        self.client.credentials(HTTP_AUTHORIZATION='')
+        response = self.client.delete(path=self.nodo_creato, format='json')
+        self.assertEqual(response.status_code,403)
+
+    # test delete nodo con url avente nodo inesistente
+    def test_get_nodo_bad_url(self):
+        self.test_post_nodo_ok()
+        response = self.client.delete(path=self.nodo_inesistente, format='json')
+        self.assertEqual(response.status_code,404)

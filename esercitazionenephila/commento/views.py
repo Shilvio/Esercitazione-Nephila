@@ -9,8 +9,8 @@ from .serializers import *
 from risorsa import views as risorsa_views
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-# Create your views here.
 
+# cerca commenti in basa all'id di una risorsa
 def search_commenti(risorsa_id):
     try:
         commenti = Commento.objects.filter(risorsa= risorsa_id).all()
@@ -18,7 +18,7 @@ def search_commenti(risorsa_id):
     except Commento.DoesNotExist:
         return None
 
-
+# api handler per generare i commenti
 @swagger_auto_schema(
     tags=['commenti'],
     method='post',

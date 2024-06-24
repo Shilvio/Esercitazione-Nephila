@@ -7,7 +7,7 @@ from .serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-# Create your views here.
+# api handler per registrare un utente
 @swagger_auto_schema(
     tags=['utenti'],
     method='post',
@@ -44,6 +44,7 @@ def register(request):
         return Response({"token": token.key, "utente" : {utente.username, utente.ruolo}},status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# api handler per loggare un utente, genera un token di auth
 @swagger_auto_schema(
     tags=['utenti'],
     method='post',

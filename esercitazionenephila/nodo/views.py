@@ -11,6 +11,7 @@ from risorsa import serializers as risorsa_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+# cerca nodi child nel padre
 def search_nodi_child(nodo):
     try:
         nodiChild = Nodo.objects.filter(padre= nodo).all()
@@ -29,6 +30,7 @@ def post_nodo_child(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+# cerca il padrte da un nodo child
 def search_nodo_padre(nodo_id):
     try :
         nodo = Nodo.objects.get(id=nodo_id)
@@ -37,7 +39,7 @@ def search_nodo_padre(nodo_id):
     except Nodo.DoesNotExist:
         return None
 
-
+# cerca un nodo dall'id
 def search_nodo(nodo_id):
     try :
         nodo = Nodo.objects.get(id=nodo_id)
@@ -45,6 +47,7 @@ def search_nodo(nodo_id):
     except Nodo.DoesNotExist:
         return None
 
+# ritorna un nodo, i child se presentri e le risorse se presenti
 def get_nodo(nodo_id):
     nodo = search_nodo(nodo_id)
     if not nodo:
@@ -56,21 +59,24 @@ def get_nodo(nodo_id):
     risorse_data = risorsa_serializer.RisorsaNodoSerializer(risorse ,many=True).data if risorse else None
     return Response({"nodo": serializer.data, "figli":figli_data, "risorse":risorse_data} )
 
+# elimina il nodo
 def delete_nodo(request,nodo_id):
     nodo = search_nodo(nodo_id)
-    if nodo.owner.id == request.user.id:
-        if not nodo:
+    if not nodo:
             return Response({"details": "Nessun nodo presente"},status=status.HTTP_404_NOT_FOUND)
-        serializer = NodoSerializer(nodo, many=False)
-        figli = search_nodi_child(nodo)
-        risorse = views_risorsa.search_risorsa(nodo)
-        if ((not figli) and (not risorse)):
-            nodo.delete()
-            return Response({"details": "nodo "+ str(serializer.data['id']) + " cancellato"})
+    try:
+        if nodo.owner.id == request.user.id:
+            serializer = NodoSerializer(nodo, many=False)
+            figli = search_nodi_child(nodo)
+            risorse = views_risorsa.search_risorsa(nodo)
+            if ((not figli) and (not risorse)):
+                nodo.delete()
+                return Response({"details": "nodo "+ str(serializer.data['id']) + " cancellato"})
 
-    else:
+    except:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+# modifica il titolo del nodo
 def put_titolo_nodo(request,nodo_id):
     nodo = search_nodo(nodo_id)
     try:
@@ -106,6 +112,7 @@ def post_nodo(request,padre):
         return Response({"nodo": serializer.data},status=status.HTTP_201_CREATED)
     return Response({"details": "Richeista malformata"}, status=status.HTTP_400_BAD_REQUEST)
 
+# api view handler per nodo root
 @swagger_auto_schema(
     tags=['nodi'],
     method='post',
@@ -127,7 +134,7 @@ def post_nodo(request,padre):
 def post_nodo_root(request):
     return post_nodo(request,None)
 
-
+# api view handler per postare nodo in padre
 @swagger_auto_schema(
     tags=['nodi'],
     method='post',
@@ -156,6 +163,7 @@ def post_nuovo_child_in_padre(request,nodo_id):
     else:
         return Response({"details":"Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
 
+# api view handler per operazioni put delete e get nodi child e nodi normali
 @swagger_auto_schema(
     tags=['nodi'],
     methods=['post'],
