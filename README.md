@@ -86,4 +86,3 @@ La gestione in amministrazione avviene attraverso la pagina: http://127.0.0.1:80
 ## UML database
 
 È presente nel file **Diagramma db.png** .
->>>>>>> master
